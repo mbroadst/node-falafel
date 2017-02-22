@@ -1,7 +1,4 @@
 var parse = require('acorn').parse;
-var isArray = require('isarray');
-var objectKeys = require('object-keys');
-var forEach = require('foreach');
 
 module.exports = function (src, opts, fn) {
     if (typeof opts === 'function') {
@@ -31,21 +28,25 @@ module.exports = function (src, opts, fn) {
     (function walk (node, parent) {
         insertHelpers(node, parent, result.chunks);
 
-        forEach(objectKeys(node), function (key) {
-            if (key === 'parent') return;
+        var keys = Object.keys(node);
+        for (var i = 0; i < keys.length; ++i) {
+            var key = keys[i];
+            if (key === 'parent') continue;
 
             var child = node[key];
-            if (isArray(child)) {
-                forEach(child, function (c) {
+            if (Array.isArray(child)) {
+                for (var j = 0; j < child.length; ++j) {
+                    var c = child[j];
                     if (c && typeof c.type === 'string') {
                         walk(c, node);
                     }
-                });
+                }
             }
             else if (child && typeof child.type === 'string') {
                 walk(child, node);
             }
-        });
+        }
+
         fn(node);
     })(ast, undefined);
 
@@ -65,9 +66,11 @@ function insertHelpers (node, parent, chunks) {
 
     if (node.update && typeof node.update === 'object') {
         var prev = node.update;
-        forEach(objectKeys(prev), function (key) {
+        var keys = Object.keys(prev);
+        for (var i = 0; i < keys.length; ++i) {
+            var key = keys[i];
             update[key] = prev[key];
-        });
+        }
         node.update = update;
     }
     else {
