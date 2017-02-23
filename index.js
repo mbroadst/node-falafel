@@ -77,9 +77,10 @@ function insertHelpers (node, parent, chunks) {
         node.update = update;
     }
 
-    function update (s) {
+    function update (s, length) {
+        length = length || node.end;
         chunks[node.start] = s;
-        for (var i = node.start + 1; i < node.end; i++) {
+        for (var i = node.start + 1; i < length; i++) {
             chunks[i] = '';
         }
     }
