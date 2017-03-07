@@ -64,6 +64,10 @@ function insertHelpers (node, parent, chunks) {
         chunks[node.start] = s + chunks[node.start];
     }
 
+    node.append = function(s) {
+        chunks[node.end - 1] = chunks[node.end - 1] + s;
+    }
+
     if (node.update && typeof node.update === 'object') {
         var prev = node.update;
         var keys = Object.keys(prev);
